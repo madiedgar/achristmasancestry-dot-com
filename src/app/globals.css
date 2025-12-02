@@ -1,33 +1,82 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --christmas-red: #991b1b;
-  --christmas-green: #065f46;
-  --christmas-gold: #fbbf24;
-  --snow: #f9fafb;
+@theme {
+  --color-primary-green: #458352;
+  --color-primary-cream: #f9fff1;
+  --color-christmas-red: #8B3A3A;
+  --color-christmas-green: #5C6F5C;
+  --color-christmas-gold: #D4A574;
+  --color-christmas-cream: #F5F1E8;
+  --color-christmas-beige: #E8E1D5;
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--snow);
-  color: #1f2937;
+  font-family: 'EB Garamond', Georgia, serif;
+  background-color: var(--color-primary-cream);
+  color: var(--color-primary-green);
 }
 
-/* Building/calendar door styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 400;
+}
+
+/* Calendar door styles with Figma design */
 .advent-door {
   transition: all 0.3s ease;
 }
 
-.advent-door:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+/* TRANSITION STYLE 1: Simple Fade (default) */
+.advent-door .door-illustration {
+  transition: opacity 0.5s ease-in-out;
 }
 
+.advent-door .door-number {
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* TRANSITION STYLE 2: Fade with Blur (uncomment to use) */
+/*
+.advent-door .door-illustration {
+  transition: opacity 0.6s ease-in-out, filter 0.6s ease-in-out;
+  filter: blur(8px);
+}
+
+.advent-door:hover .door-illustration {
+  filter: blur(0px);
+}
+
+.advent-door .door-number {
+  transition: opacity 0.6s ease-in-out, filter 0.6s ease-in-out;
+}
+
+.advent-door:hover .door-number {
+  filter: blur(4px);
+}
+*/
+
+/* TRANSITION STYLE 3: Cross-fade with scale (uncomment to use) */
+/*
+.advent-door .door-illustration {
+  transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+  transform: scale(0.95);
+}
+
+.advent-door:hover .door-illustration {
+  transform: scale(1);
+}
+
+.advent-door .door-number {
+  transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+}
+
+.advent-door:hover .door-number {
+  transform: scale(0.95);
+}
+*/
+
 .advent-door-locked {
-  opacity: 0.6;
-  filter: grayscale(50%);
+  opacity: 0.5;
 }
 
 .advent-door-locked:hover {
@@ -36,18 +85,50 @@ body {
 
 /* Newsletter form styles */
 .newsletter-input {
-  @apply px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-christmas-red focus:border-transparent;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-christmas-beige);
+  border-radius: 0.25rem;
+  background-color: #FFFFFF;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--color-primary-green);
 }
 
 .newsletter-button {
-  @apply px-6 py-2 bg-christmas-red text-white rounded-md hover:bg-red-800 transition-colors font-semibold;
+  padding: 0.75rem 2rem;
+  background-color: var(--color-primary-green);
+  color: var(--color-primary-cream);
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.newsletter-button:hover {
+  opacity: 0.9;
 }
 
 /* Devotional content typography */
 .devotional-content {
-  @apply prose prose-lg max-w-none;
-  @apply prose-headings:font-serif prose-headings:text-christmas-red;
-  @apply prose-p:text-gray-700 prose-p:leading-relaxed;
+  max-width: none;
+}
+
+.devotional-content h1, .devotional-content h2, .devotional-content h3 {
+  font-family: 'EB Garamond', Georgia, serif;
+  color: var(--color-primary-green);
+  font-weight: 400;
+}
+
+.devotional-content p {
+  color: var(--color-primary-green);
+  line-height: 1.8;
+  font-size: 1.0625rem;
 }
 
 /* Video embed container */

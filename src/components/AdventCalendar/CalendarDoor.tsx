@@ -1,91 +1,131 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { AdventDay } from '@/lib/calendar-config';
-import { isDayUnlocked, getUnlockCountdown } from '@/lib/time-utils';
+import { isDayUnlocked } from '@/lib/time-utils';
+import Image from 'next/image';
+import DoorFrame from './DoorFrame';
 
 interface CalendarDoorProps {
   day: AdventDay;
-  size?: 'small' | 'medium' | 'wide' | 'tall';
+  width: number;
+  height: number;
+  onClick?: (dayNumber: number) => void;
 }
 
-export default function CalendarDoor({ day, size = 'medium' }: CalendarDoorProps) {
+// Map door numbers to illustration images with crop/zoom settings
+interface IllustrationConfig {
+  src: string;
+  objectPosition?: string;
+  scale?: number;
+}
+
+const doorIllustrations: Record<number, IllustrationConfig> = {
+  1: { src: '/illustrations/living-room.png', objectPosition: 'center', scale: 1 },
+  2: { src: '/illustrations/living-room.png', objectPosition: 'left center', scale: 1.5 },
+  3: { src: '/illustrations/office.png', objectPosition: 'center', scale: 1 },
+  4: { src: '/illustrations/living-room.png', objectPosition: 'right center', scale: 1.5 },
+  5: { src: '/illustrations/office.png', objectPosition: 'left center', scale: 1.5 },
+  6: { src: '/illustrations/living-room.png', objectPosition: 'center top', scale: 1.8 },
+  7: { src: '/illustrations/office.png', objectPosition: 'right top', scale: 1.8 },
+  8: { src: '/illustrations/living-room.png', objectPosition: 'left bottom', scale: 1.8 },
+  9: { src: '/illustrations/office.png', objectPosition: 'center bottom', scale: 1.5 },
+  10: { src: '/illustrations/living-room.png', objectPosition: 'right top', scale: 2 },
+  11: { src: '/illustrations/office.png', objectPosition: 'center', scale: 1 },
+  12: { src: '/illustrations/living-room.png', objectPosition: 'center', scale: 1.2 },
+  13: { src: '/illustrations/office.png', objectPosition: 'left bottom', scale: 1.5 },
+  14: { src: '/illustrations/living-room.png', objectPosition: 'center', scale: 1 },
+  15: { src: '/illustrations/office.png', objectPosition: 'center', scale: 1 },
+};
+
+export default function CalendarDoor({ day, width, height, onClick }: CalendarDoorProps) {
   const [unlocked, setUnlocked] = useState(false);
-  const [countdown, setCountdown] = useState<string>('');
+  const [isHovered, setIsHovered] = useState(false);
+  const [isTapped, setIsTapped] = useState(false);
 
   useEffect(() => {
-    // Check unlock status
     const checkUnlock = () => {
-      const isUnlocked = isDayUnlocked(day.unlockDate);
-      setUnlocked(isUnlocked);
-
-      if (!isUnlocked) {
-        const { timeUntil } = getUnlockCountdown(day.unlockDate);
-        setCountdown(timeUntil || '');
-      }
+      setUnlocked(isDayUnlocked(day.unlockDate));
     };
-
     checkUnlock();
-    // Update every minute
     const interval = setInterval(checkUnlock, 60000);
-
     return () => clearInterval(interval);
   }, [day.unlockDate]);
 
-  const sizeClasses = {
-    small: 'aspect-square',
-    medium: 'aspect-square md:col-span-1',
-    wide: 'aspect-[2/1] col-span-2',
-    tall: 'aspect-[1/2] row-span-2',
+  const illustrationConfig = doorIllustrations[day.dayNumber];
+  const showIllustration = (isHovered || isTapped) && unlocked;
+
+  const handleClick = () => {
+    if (unlocked && onClick) {
+      onClick(day.dayNumber);
+    }
   };
 
   const content = (
     <div
-      className={`
-        advent-door
-        ${sizeClasses[size]}
-        border-3 border-christmas-green rounded-md
-        flex flex-col items-center justify-center
-        p-4
-        ${unlocked
-          ? 'bg-white hover:bg-christmas-snow cursor-pointer'
-          : 'advent-door-locked bg-gray-100 cursor-not-allowed'
-        }
-      `}
+      className="advent-door relative cursor-pointer"
+      style={{ width: `${width}px`, height: `${height}px` }}
+      onMouseEnter={() => unlocked && setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => unlocked && setIsTapped(true)}
+      onTouchEnd={() => setIsTapped(false)}
     >
-      <div className="text-center">
-        <div className={`text-3xl md:text-4xl font-bold ${unlocked ? 'text-christmas-red' : 'text-gray-400'}`}>
+      <DoorFrame width={width} height={height}>
+        {/* Door Number */}
+        <div
+          className={`door-number transition-opacity duration-500 ${showIllustration ? 'opacity-0' : 'opacity-100'}`}
+          style={{
+            fontSize: width > 200 ? '48px' : '32px',
+            color: unlocked ? '#458352' : '#d1d5db',
+            fontWeight: 'bold',
+          }}
+        >
           {day.dayNumber}
         </div>
-        {!unlocked && (
-          <div className="mt-2">
-            <svg className="w-6 h-6 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            {countdown && (
-              <p className="text-xs text-gray-500 mt-1">
-                {countdown}
-              </p>
-            )}
+
+        {/* Illustration on hover */}
+        {unlocked && illustrationConfig && (
+          <div
+            className={`door-illustration absolute inset-0 transition-opacity duration-500 pointer-events-none ${
+              showIllustration ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <Image
+              src={illustrationConfig.src}
+              alt={`Day ${day.dayNumber}`}
+              fill
+              style={{
+                objectFit: 'cover',
+                objectPosition: illustrationConfig.objectPosition || 'center',
+                transform: `scale(${illustrationConfig.scale || 1})`,
+                transformOrigin: 'center',
+              }}
+              className="p-4"
+              unoptimized
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
           </div>
         )}
-        {unlocked && (
-          <p className="text-xs text-christmas-green mt-1 font-medium">
-            {day.title}
-          </p>
+
+        {/* Lock icon for locked doors */}
+        {!unlocked && (
+          <div className="absolute top-2 right-2">
+            <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
         )}
-      </div>
+      </DoorFrame>
     </div>
   );
 
-  if (unlocked) {
-    return (
-      <Link href={`/day/${day.dayNumber}`}>
-        {content}
-      </Link>
-    );
-  }
-
-  return content;
+  return unlocked && onClick ? (
+    <button onClick={handleClick} className="block">
+      {content}
+    </button>
+  ) : (
+    content
+  );
 }

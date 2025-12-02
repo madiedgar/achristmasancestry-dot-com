@@ -16,7 +16,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/madiedgar/achristmasancestry-dot-com/issues"
   },
@@ -24,6 +23,7 @@
   "dependencies": {
     "@react-email/components": "^1.0.1",
     "date-fns-tz": "^3.2.0",
+    "lucide-react": "^0.555.0",
     "next": "^16.0.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

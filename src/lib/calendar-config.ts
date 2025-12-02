@@ -9,7 +9,7 @@ export interface AdventDay {
 // Calendar layout inspired by building design with 24 days
 // Matches the vertical building layout from Figma
 export const adventDays: AdventDay[] = [
-  { dayNumber: 1, unlockDate: '2025-12-01', title: 'The Beginning' },
+  { dayNumber: 1, unlockDate: '2025-11-27', title: 'The Beginning' },
   { dayNumber: 2, unlockDate: '2025-12-02', title: 'Faith' },
   { dayNumber: 3, unlockDate: '2025-12-03', title: 'Hope' },
   { dayNumber: 4, unlockDate: '2025-12-04', title: 'Promise' },

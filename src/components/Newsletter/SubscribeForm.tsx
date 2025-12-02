@@ -21,7 +21,7 @@ export default function SubscribeForm() {
     const validation = emailSchema.safeParse({ email });
     if (!validation.success) {
       setStatus('error');
-      setMessage(validation.error.errors[0].message);
+      setMessage(validation.error.issues[0].message);
       return;
     }
 

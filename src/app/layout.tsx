@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/Navigation/Header";
-import Footer from "@/components/Navigation/Footer";
 
 export const metadata: Metadata = {
   title: "A Christmas Ancestry | Advent Calendar",
@@ -16,12 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-christmas-snow antialiased">
-        <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
+      <body className="antialiased">
+        {children}
       </body>
     </html>
   );
